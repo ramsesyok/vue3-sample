@@ -2,7 +2,8 @@
   <div class="about">
     <h1>This is an about page</h1>
     <button @click="store.GetLandmarksID(1)">Button</button>
-    <h2>{{ store.current.name }}</h2>
+    <h2 v-if="store.currentLoading">ロード中</h2>
+    <h2 v-else>{{ store.current.name }}</h2>
   </div>
 </template>
 

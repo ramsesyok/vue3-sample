@@ -36,8 +36,7 @@ export const useLandmarkStore = defineStore('landmark', () => {
         }finally {
             currentLoading.value = false
         }        
-
     }
 
-    return { count, current, doubleCount, increment , GetLandmarksID}
+    return { count, current, doubleCount,currentLoading, increment , GetLandmarksID}
 })
