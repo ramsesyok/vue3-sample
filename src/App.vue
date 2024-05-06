@@ -1,27 +1,58 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+  <v-app>
+    <v-system-bar color="secondary">
+      System Bar
+    </v-system-bar>
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
+    <v-app-bar color="primary">
+      <v-app-bar-title>
+        Application Bar
+      </v-app-bar-title>
+    </v-app-bar>
 
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
+    <v-navigation-drawer permanent>
+      <v-list>
+      <v-list-item>
+        <router-link to="/" >Home</router-link>
+      </v-list-item>
+      <v-list-item >
+        <router-link to="/landmarks" >Landmark</router-link>
+      </v-list-item>
+      <v-list-item>
+        <router-link to="/map" >Map</router-link>
+      </v-list-item>
+    </v-list>
+    </v-navigation-drawer>
 
-  <RouterView />
+    <v-main>
+      <router-view />
+    </v-main>
+
+    <v-bottom-navigation>
+      Button Navigation
+    </v-bottom-navigation>
+
+    <v-footer color="primary" app>
+      Footer
+    </v-footer>
+
+    <!-- <v-navigation-drawer permanent app>
+    <router-link to="/landmarks" >Landmark</router-link>
+    </v-navigation-drawer>
+  
+    <v-main style="background-color: green;">
+      <router-view style="background-color: yellow;"/>
+    </v-main> -->
+  </v-app>
 </template>
 
 <style scoped>
-header {
+/* header {
   line-height: 1.5;
   max-height: 100vh;
 }
@@ -81,5 +112,5 @@ nav a:first-of-type {
     padding: 1rem 0;
     margin-top: 1rem;
   }
-}
+} */
 </style>
