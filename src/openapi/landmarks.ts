@@ -6,7 +6,10 @@
 
 export interface paths {
   "/landmarks": {
-    /** GetLandmarks 登録地点の一覧を返します. */
+    /**
+     * GetLandmarks 登録されている登録地点のインデックス一覧を返します.
+     * クエリパラメータnameを使って地点名称によるフィルタをかけることができます。(部分一致)
+     */
     get: operations["GetLandmarks"];
     /** PostLandmarks 新しい地点を登録します. */
     post: operations["PostLandmarks"];
@@ -18,6 +21,8 @@ export interface paths {
     put: operations["PutLandmarksID"];
     /** DeleteLandmarksID 指定された地点データを削除します. */
     delete: operations["DeleteLandmarksID"];
+    /** PatchLandmarksID 指定地点部分更新 指定された地点データを更新します. */
+    patch: operations["PatchLandmarksID"];
     parameters: {
       path: {
         /**
@@ -38,42 +43,45 @@ export type webhooks = Record<string, never>;
 
 export interface components {
   schemas: {
-    /** @description 地点情報 */
+    /** @description LandmarkProperties 地点情報のプロパティ */
+    LandmarkProperties: {
+      /**
+       * @description 地点名称
+       * @example 東京タワー
+       */
+      name?: string;
+      /**
+       * @description 地点概要
+       * @example 東京都港区芝公園にある総合電波塔で、正式名称は日本電波塔である。
+       */
+      description?: string;
+      /**
+       * Format: double
+       * @description 緯度[deg]
+       * @example 35.6586193045004
+       */
+      latitude?: number;
+      /**
+       * Format: double
+       * @description 経度[deg]
+       * @example 139.7454050822132
+       */
+      longitude?: number;
+      /**
+       * Format: float
+       * @description 高度[m]
+       * @example 333
+       */
+      altitude?: number;
+    };
+    /** @description Landmark 地点情報 */
     Landmark: {
       /**
        * @description 地点識別番号
        * @example 1
        */
       id?: number;
-      /**
-       * @description 地点名称
-       * @example 東京タワー
-       */
-      name: string;
-      /**
-       * @description 地点概要
-       * @example 東京都港区芝公園にある総合電波塔で、正式名称は日本電波塔である。
-       */
-      description: string;
-      /**
-       * Format: double
-       * @description 緯度[deg]
-       * @example 35.6586193045004
-       */
-      latitude: number;
-      /**
-       * Format: double
-       * @description 経度[deg]
-       * @example 139.7454050822132
-       */
-      longitude: number;
-      /**
-       * Format: float
-       * @description 高度[m]
-       * @example 333
-       */
-      altitude: number;
-    };
+    } & components["schemas"]["LandmarkProperties"];
     /**
      * @description 地点情報一覧
      * @example {
@@ -108,7 +116,7 @@ export interface components {
       items: components["schemas"]["Landmark"][];
     };
     /** @description 地点情報一覧 */
-    LocationSearchQuery: {
+    LandmarkSearchQuery: {
       /** @description ソート情報 */
       sort?: components["schemas"]["SortField"];
       /** @description データ数 */
@@ -136,6 +144,34 @@ export interface components {
        * @enum {string}
        */
       type: "extract" | "partial" | "prefix" | "suffix";
+    };
+    /** @description LandmarkIndex 地点情報インデックス */
+    LandmarkIndex: {
+      /**
+       * @description 地点識別番号
+       * @example 1
+       */
+      id: number;
+      /**
+       * @description 地点名称
+       * @example 東京タワー
+       */
+      name: string;
+      /**
+       * @description 地点概要
+       * @example 東京都港区芝公園にある総合電波塔で、正式名称は日本電波塔である。
+       */
+      description: string;
+    };
+    /** @description 地点情報インデックス一覧 */
+    LandmarkIndices: {
+      /**
+       * @description データ数
+       * @example 1
+       */
+      count: number;
+      /** @description データ一覧 */
+      items: components["schemas"]["LandmarkIndex"][];
     };
   };
   responses: {
@@ -307,31 +343,28 @@ export type external = Record<string, never>;
 
 export interface operations {
 
-  /** GetLandmarks 登録地点の一覧を返します. */
+  /**
+   * GetLandmarks 登録されている登録地点のインデックス一覧を返します.
+   * クエリパラメータnameを使って地点名称によるフィルタをかけることができます。(部分一致)
+   */
   GetLandmarks: {
     parameters: {
-      query: {
+      query?: {
         /**
-         * @description ページ番号
-         * @example 1
+         * @description ランドマーク名称
+         * @example 京
          */
-        page: number;
-        /**
-         * @description ページあたりのデータ数
-         * @example 2
-         */
-        perPage: number;
+        name?: string;
       };
     };
     responses: {
       /** @description OK */
       200: {
         content: {
-          "application/json": components["schemas"]["Landmarks"];
+          "application/json": components["schemas"]["LandmarkIndices"];
         };
       };
       400: components["responses"]["BadRequest"];
-      404: components["responses"]["NotFound"];
       500: components["responses"]["InternalServerError"];
     };
   };
@@ -413,12 +446,36 @@ export interface operations {
       500: components["responses"]["InternalServerError"];
     };
   };
+  /** PatchLandmarksID 指定地点部分更新 指定された地点データを更新します. */
+  PatchLandmarksID: {
+    parameters: {
+      path: {
+        /**
+         * @description ランドマーク識別番号
+         * @example 1
+         */
+        id: number;
+      };
+    };
+    /** @description 更新する地点情報 */
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["LandmarkProperties"];
+      };
+    };
+    responses: {
+      200: components["responses"]["Updated"];
+      400: components["responses"]["BadRequest"];
+      404: components["responses"]["NotFound"];
+      500: components["responses"]["InternalServerError"];
+    };
+  };
   /** PostLandmarksSearch 検索条件を指定して検索します. */
   PostLandmarksSearch: {
     /** @description 登録する地点情報 */
     requestBody: {
       content: {
-        "application/json": components["schemas"]["LocationSearchQuery"];
+        "application/json": components["schemas"]["LandmarkSearchQuery"];
       };
     };
     responses: {

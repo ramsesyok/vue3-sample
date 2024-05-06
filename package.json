@@ -11,13 +11,16 @@
     "build-only": "vite build",
     "type-check": "vue-tsc --build --force",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
-    "generate": "openapi-typescript https://raw.githubusercontent.com/ramsesyok/oapi-sample/main/api/openapi/landmarks.yaml -o ./src/openapi/landmarks.d.ts"
+    "generate": "openapi-typescript https://raw.githubusercontent.com/ramsesyok/oapi-sample/main/api/openapi/landmarks.yaml -o ./src/openapi/landmarks.ts"
   },
   "dependencies": {
+    "@mdi/font": "^7.4.47",
     "openapi-fetch": "^0.9.4",
     "pinia": "^2.1.7",
     "vue": "^3.4.21",
-    "vue-router": "^4.3.0"
+    "vue-i18n": "^9.13.1",
+    "vue-router": "^4.3.0",
+    "vuetify": "^3.5.17"
   },
   "devDependencies": {
     "@pinia/testing": "^0.1.3",
